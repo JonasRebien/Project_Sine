@@ -14,8 +14,15 @@ m.setvolume(80) #Amplitude
 
 ################## GPIO #####################
 GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+
 GPIO.setup(17, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+
+################## LIGHT #####################
+GPIO.setup(27, GPIO.OUT)
+GPIO.output(27, GPIO.LOW)
 
 
 #List of Frequencies
@@ -26,8 +33,7 @@ freqList = ['0','50','100','150','200']
 name = raw_input('Enter name: ')
 gender = raw_input('Enter Gender: ')
 
-print (gender + ', name: ' + name)
-
+print(gender + ', name: ' + name)
 
 # run down
 while len(freqList) > 0:
@@ -37,14 +43,16 @@ while len(freqList) > 0:
     freqList.pop(newTestFreq)
     #play Freq
     SoundPlayer.playTone(testFreq, 1, True, 0)
+    #turn led on
+    GPIO.output(27, GPIO.HIGH)
     while True:
-        input_state1 = GPIO.input(17)
+        input_state1 = GPIO.input(23)
         if input_state1 == False:
             print('Yes ' + testFreq)
             x = 'yes'
             #time.sleep(0.4)
             break
-        input_state2 = GPIO.input(23)
+        input_state2 = GPIO.input(17)
         if input_state2 == False:
             print('No ' + testFreq)
             x = 'no'
@@ -53,7 +61,7 @@ while len(freqList) > 0:
     #file writer/creator
     with open('csv/' + name + '.csv', 'a') as csvfile:
         csvfile.write(gender + "," + testFreq + ',' + x + '\n') 
-
+    GPIO.output(27, GPIO.LOW)
 
 
 # final freqlist
